@@ -1,0 +1,36 @@
+from django.urls import path, include
+from . import views
+from django.contrib.auth import views as auth_views
+
+urlpatterns = [
+    path('', views.home, name='home'),
+    path('property/<int:pk>/', views.property_detail, name='property_detail'),
+    path('booking/<int:property_id>/', views.booking_view, name='booking'),
+    path('payment/<int:booking_id>/', views.payment_view, name='payment'),
+    path('dashboard/', views.dashboard, name='dashboard'),
+    path('camera/', views.camera_upload, name='camera_upload'),
+    path('', views.property_list, name='property_list'),
+    path('property/<int:pk>/', views.property_detail, name='property_detail'),
+    path('add/', views.add_property, name='add_property'),
+    path('edit/<int:pk>/', views.edit_property, name='edit_property'),
+    path('delete/<int:pk>/', views.delete_property, name='delete_property'),
+    path('property/<int:pk>/add_review/', views.add_review, name='add_review'),
+    path('profile/', views.profile, name='profile'),
+    path('profile/save_property/<int:pk>/', views.save_property, name='save_property'),
+    path('profile/remove_saved_property/<int:pk>/', views.remove_saved_property, name='remove_saved_property'),
+    path('profile/mark_notification_as_read/<int:pk>/', views.mark_notification_as_read, name='mark_notification_as_read'),
+    path('accounts/', include('allauth.urls')),
+    path('signout/', auth_views.LogoutView.as_view(), name='signout'),
+    path('terms-of-service/', views.terms_of_service, name='terms_of_service'),
+    path('privacy-policy/', views.privacy_policy, name='privacy_policy'),
+    path('faqs/', views.faqs, name='faqs'),
+    path('checkout/', views.checkout, name='checkout'),
+    path('payment-success/', views.payment_success, name='payment_success'),
+    path('payment-failed/', views.payment_failed, name='payment_failed'),
+    path('property/<int:pk>/save/', views.save_property, name='save_property'),
+    path('property/<int:pk>/remove/', views.remove_saved_property, name='remove_saved_property'),
+    path('property/<int:pk>/send_message/', views.send_message, name='send_message'),
+    path('blog/', views.blog_list, name='blog_list'),
+    path('blog/<int:pk>/', views.blog_detail, name='blog_detail'),
+    path('blog/add/', views.add_blog_post, name='add_blog_post'),
+]

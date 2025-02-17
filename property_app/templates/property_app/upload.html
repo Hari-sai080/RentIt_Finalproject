@@ -1,0 +1,40 @@
+<div class="camera-container mb-3">
+    <video id="video" width="300" height="200" class="d-none"></video>
+    <canvas id="canvas" class="d-none"></canvas>
+    <button type="button" class="btn btn-info" onclick="startCamera()">Open Camera</button>
+    <button type="button" class="btn btn-success" onclick="capturePhoto()">Capture</button>
+</div>
+
+<script>
+let videoStream = null;
+
+function startCamera() {
+    navigator.mediaDevices.getUserMedia({ video: true })
+        .then(stream => {
+            const video = document.getElementById('video');
+            video.classList.remove('d-none');
+            video.srcObject = stream;
+            video.play();
+            videoStream = stream;
+        });
+}
+
+function capturePhoto() {
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const context = canvas.getContext('2d');
+    
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    context.drawImage(video, 0, 0);
+    
+    canvas.toBlob(blob => {
+        const file = new File([blob], 'property_photo.png', { type: 'image/png' });
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(file);
+        document.getElementById('id_images').files = dataTransfer.files;
+    });
+    
+    videoStream.getTracks().forEach(track => track.stop());
+}
+</script>

@@ -1,0 +1,78 @@
+{% load static %}
+{% extends 'base.html' %}
+
+{% block title %}Add Property{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Add Property</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="title" class="form-label">Title</label>
+            {{ form.title }}
+        </div>
+        <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            {{ form.description }}
+        </div>
+        <div class="mb-3">
+            <label for="price" class="form-label">Price</label>
+            {{ form.price }}
+        </div>
+        <div class="mb-3">
+            <label for="location" class="form-label">Location</label>
+            {{ form.location }}
+        </div>
+        <div id="map" style="height: 400px;"></div>
+        <div class="mb-3">
+            <label for="latitude" class="form-label">Latitude</label>
+            {{ form.latitude }}
+        </div>
+        <div class="mb-3">
+            <label for="longitude" class="form-label">Longitude</label>
+            {{ form.longitude }}
+        </div>
+        <div class="mb-3">
+            <label for="property_type" class="form-label">Property Type</label>
+            {{ form.property_type }}
+        </div>
+        <div class="mb-3">
+            <label for="amenities" class="form-label">Amenities</label>
+            {{ form.amenities }}
+        </div>
+        <div class="mb-3">
+            <label for="url" class="form-label">URL</label>
+            {{ form.url }}
+        </div>
+        <div class="mb-3">
+            <label for="video" class="form-label">Video Tour</label>
+            {{ form.video }}
+        </div>
+        <div class="mb-3">
+            <label for="images" class="form-label">Images</label>
+            <input type="file" name="images" multiple>
+        </div>
+        <button type="submit" class="btn btn-primary">Add Property</button>
+    </form>
+</div>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script>
+    var map = L.map('map').setView([51.505, -0.09], 13);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    var marker = L.marker([51.505, -0.09]).addTo(map);
+
+    map.on('click', function(e) {
+        var lat = e.latlng.lat;
+        var lng = e.latlng.lng;
+        marker.setLatLng(e.latlng);
+        document.getElementById('id_latitude').value = lat;
+        document.getElementById('id_longitude').value = lng;
+    });
+</script>
+{% endblock %}

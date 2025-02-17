@@ -1,0 +1,20 @@
+<!-- property_app/templates/property_app/home.html -->
+{% extends 'base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h1>Welcome to Rent It</h1>
+  {% if properties %}
+    {% for property in properties %}
+      <div class="property-item">
+        <h2>{{ property.title }}</h2>
+        <p>{{ property.description }}</p>
+      </div>
+    {% endfor %}
+  {% else %}
+    <p>No properties found.</p>
+  {% endif %}
+</div>
+{% endblock %}

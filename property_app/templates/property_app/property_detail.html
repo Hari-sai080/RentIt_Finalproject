@@ -1,0 +1,122 @@
+{% load static %}
+{% extends 'base.html' %}
+
+{% block title %}{{ property.title }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>{{ property.title }}</h2>
+    <div id="propertyCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+            {% for image in property.images.all %}
+            <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                <img src="{{ image.image.url }}" class="d-block w-100" alt="{{ property.title }}" loading="lazy">
+            </div>
+            {% endfor %}
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#propertyCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#propertyCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+    {% if property.video %}
+    <div class="mt-4">
+        <h4>Video Tour</h4>
+        <video controls class="w-100">
+            <source src="{{ property.video.url }}" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+    {% endif %}
+    <div class="mt-4">
+        <h4>Price: ₹{{ property.price }}</h4>
+        <p>{{ property.description }}</p>
+        <h5>Amenities</h5>
+        <ul>
+            {% for amenity in property.amenities.all %}
+            <li>{{ amenity.name }}</li>
+            {% endfor %}
+        </ul>
+        <h5>Location</h5>
+        <div id="map" style="height: 400px;"></div>
+        <h5>Contact Information</h5>
+        <p><strong>Name:</strong> {{ property.contact_name }}</p>
+        <p><strong>Email:</strong> <a href="mailto:{{ property.contact_email }}">{{ property.contact_email }}</a></p>
+        <p><strong>Phone:</strong> <a href="tel:{{ property.contact_phone }}">{{ property.contact_phone }}</a></p>
+        <h5>Reviews and Ratings</h5>
+        <div>
+            {% for review in property.review_set.all %}
+            <div class="review">
+                <p><strong>{{ review.user.username }}</strong> - {{ review.rating }} stars</p>
+                <p>{{ review.comment }}</p>
+                <p><small>{{ review.created_at }}</small></p>
+            </div>
+            {% endfor %}
+        </div>
+        <h5>Add a Review</h5>
+        <form method="post" action="{% url 'add_review' property.pk %}">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="rating" class="form-label">Rating</label>
+                <select name="rating" id="rating" class="form-select">
+                    <option value="1">1 star</option>
+                    <option value="2">2 stars</option>
+                    <option value="3">3 stars</option>
+                    <option value="4">4 stars</option>
+                    <option value="5">5 stars</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="comment" class="form-label">Comment</label>
+                <textarea name="comment" id="comment" class="form-control"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit Review</button>
+        </form>
+        <h5>Contact Owner</h5>
+        <form method="post" action="{% url 'send_message' property.pk %}">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="content" class="form-label">Message</label>
+                <textarea name="content" id="content" class="form-control"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Send Message</button>
+        </form>
+        <h5>Share this property</h5>
+        <div>
+            <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}" target="_blank" class="btn btn-primary">
+                <i class="fab fa-facebook-f"></i> Share on Facebook
+            </a>
+            <a href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri }}&text={{ property.title }}" target="_blank" class="btn btn-info">
+                <i class="fab fa-twitter"></i> Share on Twitter
+            </a>
+            <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ request.build_absolute_uri }}&title={{ property.title }}" target="_blank" class="btn btn-primary">
+                <i class="fab fa-linkedin-in"></i> Share on LinkedIn
+            </a>
+        </div>
+        {% if user.is_authenticated %}
+        <form action="{% url 'save_property' property.pk %}" method="post" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary">Save to Favorites</button>
+        </form>
+        <form action="{% url 'remove_saved_property' property.pk %}" method="post" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Remove from Favorites</button>
+        </form>
+        {% endif %}
+    </div>
+</div>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script>
+    var map = L.map('map').setView([{{ property.latitude }}, {{ property.longitude }}], 13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+    L.marker([{{ property.latitude }}, {{ property.longitude }}]).addTo(map)
+        .bindPopup('<b>{{ property.title }}</b><br>{{ property.location }}').openPopup();
+</script>
+{% endblock %}

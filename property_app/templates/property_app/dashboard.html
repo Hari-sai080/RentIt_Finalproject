@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard - Rent It</title>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+</head>
+<body>
+    {% include 'navbar.html' %}
+    <div class="container mt-4">
+        <h1>Your Dashboard</h1>
+        <h3>Your Bookings</h3>
+        <ul class="list-group">
+            {% for booking in bookings %}
+            <li class="list-group-item">
+                Booking for: {{ booking.property.title }} | Status: {{ booking.status }}
+                <a href="{% url 'payment' booking.id %}" class="btn btn-sm btn-secondary float-right">Pay Now</a>
+            </li>
+            {% empty %}
+            <li class="list-group-item">No bookings found.</li>
+            {% endfor %}
+        </ul>
+    </div>
+</body>
+</html>

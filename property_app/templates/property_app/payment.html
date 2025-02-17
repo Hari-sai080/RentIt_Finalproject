@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Payment - Rent It</title>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+</head>
+<body>
+    {% include 'navbar.html' %}
+    <div class="container mt-4">
+        <h1>Payment for Booking #{{ booking.id }}</h1>
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="payment_method">Select Payment Method:</label>
+                <select name="payment_method" id="payment_method" class="form-control">
+                    <option value="razorpay">Razorpay</option>
+                    <option value="paytm">Paytm</option>
+                    <option value="phonepe">PhonePe</option>
+                    <option value="googlepay">Google Pay</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Pay ₹{{ booking.total_amount }}</button>
+        </form>
+    </div>
+</body>
+</html>
